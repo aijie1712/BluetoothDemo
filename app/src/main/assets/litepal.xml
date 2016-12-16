@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<litepal>
+    <dbname value="bluetoothevent"></dbname>
+
+    <version value="3"></version>
+
+    <list>
+        <mapping class="com.emba.bluetoothdemo.model.EventModel"/>
+    </list>
+
+    <storage value="external"></storage>
+</litepal>
