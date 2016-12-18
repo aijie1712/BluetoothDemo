@@ -27,4 +27,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.2.1'
     testCompile 'junit:junit:4.12'
     compile files('libs/litepal-1.4.1.jar')
+    compile files('libs/poi-3.0-rc4-20070503.jar')
+    compile files('libs/poi-scratchpad-3.0-rc4-20070503.jar')
 }
