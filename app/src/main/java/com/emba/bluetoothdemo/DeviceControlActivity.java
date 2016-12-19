@@ -1,6 +1,5 @@
 package com.emba.bluetoothdemo;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
@@ -12,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -26,6 +26,7 @@ import com.emba.bluetoothdemo.service.BluetoothLeService;
 import com.emba.bluetoothdemo.utils.DbUtils;
 import com.emba.bluetoothdemo.utils.HexUtil;
 import com.emba.bluetoothdemo.utils.MessageUtils;
+import com.emba.bluetoothdemo.utils.SampleGattAttributes;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -35,7 +36,7 @@ import java.util.UUID;
  * 对于一个BLE设备，该activity向用户提供设备连接，显示数据，显示GATT服务和设备的字符串支持等界面，
  * 另外这个activity还与BluetoothLeService通讯，反过来与Bluetooth LE API进行通讯
  */
-public class DeviceControlActivity extends Activity implements
+public class DeviceControlActivity extends AppCompatActivity implements
         View.OnClickListener {
     private final static String TAG = DeviceControlActivity.class
             .getSimpleName();
@@ -50,7 +51,7 @@ public class DeviceControlActivity extends Activity implements
     private String mDeviceAddress;
 
     private Button button_export;
-
+    private Button button_send_test;
     private Button button_send_value; // 发送按钮
     private EditText edittext_input_value; // 数据在这里输入
 
@@ -124,14 +125,14 @@ public class DeviceControlActivity extends Activity implements
                 // 写数据的服务和characteristic
                 mnotyGattService = mBluetoothLeService
                         .getSupportedGattServices(UUID
-                                .fromString("0000ffe0-0000-1000-8000-00805f9b34fb"));
+                                .fromString(SampleGattAttributes.MYCJ_BLE));
                 if (mnotyGattService != null) {
                     characteristic = mnotyGattService
                             .getCharacteristic(UUID
-                                    .fromString("0000ffe1-0000-1000-8000-00805f9b34fb"));
-                    DbUtils.save("获得服务成功");
+                                    .fromString(SampleGattAttributes.MYCJ_BLE_WRITE));
+                    DbUtils.save("获得服务成功:" + characteristic.getUuid());
                     if (characteristic != null) {
-                        DbUtils.save("获得写特征成功");
+                        DbUtils.save("获得写特征成功:" + characteristic.getUuid());
                     }
                 } else {
                     // 服务为空
@@ -142,13 +143,13 @@ public class DeviceControlActivity extends Activity implements
                 // 读数据的服务和characteristic
                 readMnotyGattService = mBluetoothLeService
                         .getSupportedGattServices(UUID
-                                .fromString("0000ffe0-0000-1000-8000-00805f9b34fb"));
+                                .fromString(SampleGattAttributes.MYCJ_BLE));
                 if (readMnotyGattService != null) {
                     readCharacteristic = readMnotyGattService
                             .getCharacteristic(UUID
-                                    .fromString("0000ffe1-0000-1000-8000-00805f9b34fb"));
+                                    .fromString(SampleGattAttributes.MYCJ_BLE_READ));
                     if (readCharacteristic != null) {
-                        DbUtils.save("获得读特征成功");
+                        DbUtils.save("获得读特征成功：" + readCharacteristic.getUuid());
                     }
                 } else {
                     Toast.makeText(context, "读服务为空，请确认连接正确的蓝牙设备",
@@ -195,10 +196,13 @@ public class DeviceControlActivity extends Activity implements
         button_export = (Button) findViewById(R.id.button_export);
         button_export.setOnClickListener(this);
 
+        button_send_test = (Button) findViewById(R.id.button_send_test);
+        button_send_test.setOnClickListener(this);
+
         button_send_value.setOnClickListener(this);
 
-        getActionBar().setTitle(mDeviceName);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(mDeviceName);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
     }
@@ -224,21 +228,27 @@ public class DeviceControlActivity extends Activity implements
                 WriteBytes = MessageUtils.appSelectBleAllData();
                 edittext_input_value
                         .setText(MessageUtils.getByteString(WriteBytes));
+                DbUtils.save("设置查询：" + edittext_input_value.getText().toString().trim());
                 break;
             case R.id.btn_operate_hidden:
                 flag = 0x00;
                 WriteBytes = MessageUtils.appSetLEDStatus(flag);
                 edittext_input_value
                         .setText(MessageUtils.getByteString(WriteBytes));
+                DbUtils.save("设置发送：" + edittext_input_value.getText().toString().trim());
                 break;
             case R.id.btn_operate_show:
                 flag = 0x01;
                 WriteBytes = MessageUtils.appSetLEDStatus(flag);
                 edittext_input_value
                         .setText(MessageUtils.getByteString(WriteBytes));
+                DbUtils.save("设置发送：" + edittext_input_value.getText().toString().trim());
                 break;
             case R.id.button_send_value:
                 sendData();
+                break;
+            case R.id.button_send_test:  // 发送测试数据
+
                 break;
             case R.id.button_export:
                 exportExcel();
@@ -246,7 +256,7 @@ public class DeviceControlActivity extends Activity implements
         }
     }
 
-    private void exportExcel(){
+    private void exportExcel() {
         final ProgressDialog dialog = ProgressDialog.show(this, null, "正在将数据导出到Excel……");
         new Thread(new Runnable() {
             @Override
@@ -256,7 +266,7 @@ public class DeviceControlActivity extends Activity implements
                 try {
                     path = DbUtils.createExcel();
                     if (TextUtils.isEmpty(path)) {
-                        Toast.makeText(getApplicationContext(), "沒有數據", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "沒有数据", Toast.LENGTH_SHORT).show();
                         return;
                     }
                     result = "导出到Excel成功！";
@@ -329,11 +339,10 @@ public class DeviceControlActivity extends Activity implements
                 // 0);
                 // characteristic.setValue(value[0],BluetoothGattCharacteristic.FORMAT_SINT16,
                 // 0);
-                characteristic.setValue(WriteBytes);
-                mBluetoothLeService.writeCharacteristic(characteristic);
-                DbUtils.save("写入数据：" + HexUtil.encodeHexStr(WriteBytes));
-                Toast.makeText(getApplicationContext(), "写入成功！",
-                        Toast.LENGTH_SHORT).show();
+//                characteristic.setValue(WriteBytes);
+//                mBluetoothLeService.writeCharacteristic(characteristic);
+//                DbUtils.save("写入数据：" + HexUtil.encodeHexStr(WriteBytes));
+                mBluetoothLeService.writeStringToGatt(edittext_input_value.getText().toString());
             }
         }
         if ((charaProp | BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) {

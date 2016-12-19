@@ -33,7 +33,6 @@ public class DbUtils {
     }
 
     /**
-     *
      * @return
      */
     public static String createExcel() {
@@ -57,7 +56,10 @@ public class DbUtils {
         // 保存文档
         String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/tmp";
         new File(dirPath).mkdirs();
-        File file = new File(dirPath, "sensor_test.xls");
+        File file = new File(dirPath, "bluetooth_temp.xls");
+        if (file.exists()) {
+            file.delete();
+        }
         FileOutputStream fos;
         try {
             if (!file.exists()) {

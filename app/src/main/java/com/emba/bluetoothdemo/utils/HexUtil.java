@@ -154,4 +154,44 @@ public class HexUtil {
     public static byte charToByte(char c) {
         return (byte) "0123456789ABCDEF".indexOf(c);
     }
+
+    public static byte[] getBytesByString(String paramString)
+    {
+        byte[] arrayOfByte = null;
+        int i = 0;
+        char[] arrayOfChar = null;
+        if (paramString != null)
+        {
+            String str = paramString.toUpperCase();
+            i = str.length() / 2;
+            arrayOfChar = str.toCharArray();
+            arrayOfByte = new byte[i];
+        }
+        for (int j = 0; ; j++)
+        {
+            if (j >= i)
+                return arrayOfByte;
+            int k = j * 2;
+            arrayOfByte[j] = (byte)(charToByte(arrayOfChar[k]) << 4 | charToByte(arrayOfChar[(k + 1)]));
+        }
+    }
+
+//    public static byte[] getBytesForRemind(String paramString1, String paramString2)
+//    {
+//        StringBuffer localStringBuffer = new StringBuffer();
+//        String str1 = Integer.toHexString(Integer.parseInt(paramString1, 2));
+//        String str2 = Integer.toHexString(paramString2.length());
+//        localStringBuffer.append("F1");
+//        localStringBuffer.append(str1);
+//        localStringBuffer.append("000");
+//        localStringBuffer.append(str2.toUpperCase());
+//        if (paramString2.length() % 2 == 0);
+//        while (true)
+//        {
+//            localStringBuffer.append(paramString2);
+//            System.out.println("提示数据协议：" + localStringBuffer.toString());
+//            return getBytesByString(localStringBuffer.toString());
+//            paramString2 = paramString2 + "0";
+//        }
+//    }
 }

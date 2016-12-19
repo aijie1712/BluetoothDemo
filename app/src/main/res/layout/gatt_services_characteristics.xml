@@ -136,6 +136,15 @@
             android:textSize="12sp" />
 
         <Button
+            android:id="@+id/button_send_test"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="left"
+            android:visibility="gone"
+            android:text="发送测试数据"
+            android:textSize="12sp" />
+
+        <Button
             android:id="@+id/button_export"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
