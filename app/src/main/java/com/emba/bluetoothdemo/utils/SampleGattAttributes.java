@@ -10,7 +10,7 @@ public class SampleGattAttributes {
     public static String HEART_RATE_MEASUREMENT = "0000C004-0000-1000-8000-00805f9b34fb";
     public static String MYCJ_BLE = "0000ffe0-0000-1000-8000-00805f9b34fb";
     public static String MYCJ_BLE_READ = "0000ffe1-0000-1000-8000-00805f9b34fb";
-    public static String MYCJ_BLE_WRITE = "0000ffe2-0000-1000-8000-00805f9b34fb";
+    public static String MYCJ_BLE_WRITE = "0000ffe1-0000-1000-8000-00805f9b34fb";
     public static String CLIENT_CHARACTERISTIC_CONFIG = "00002902-0000-1000-8000-00805f9b34fb";
 
     static {

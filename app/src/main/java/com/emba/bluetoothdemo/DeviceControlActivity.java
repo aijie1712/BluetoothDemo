@@ -66,7 +66,7 @@ public class DeviceControlActivity extends AppCompatActivity implements
     // 写数据
     private BluetoothGattCharacteristic characteristic;
     private BluetoothGattService mnotyGattService;
-    ;
+
     // 读数据
     private BluetoothGattCharacteristic readCharacteristic;
     private BluetoothGattService readMnotyGattService;
@@ -324,7 +324,6 @@ public class DeviceControlActivity extends AppCompatActivity implements
                 mNotifyCharacteristic = null;
             }
             // 读取数据，数据将在回调函数中
-            // mBluetoothLeService.readCharacteristic(characteristic);
             byte[] value = new byte[20];
             value[0] = (byte) 0x00;
             if (edittext_input_value.getText().toString().equals("")) {
@@ -332,16 +331,6 @@ public class DeviceControlActivity extends AppCompatActivity implements
                         Toast.LENGTH_SHORT).show();
                 return;
             } else {
-                // WriteBytes =
-                // edittext_input_value.getText().toString()
-                // .getBytes();
-                // characteristic.setValue(value[0],BluetoothGattCharacteristic.FORMAT_UINT8,
-                // 0);
-                // characteristic.setValue(value[0],BluetoothGattCharacteristic.FORMAT_SINT16,
-                // 0);
-//                characteristic.setValue(WriteBytes);
-//                mBluetoothLeService.writeCharacteristic(characteristic);
-//                DbUtils.save("写入数据：" + HexUtil.encodeHexStr(WriteBytes));
                 mBluetoothLeService.writeStringToGatt(edittext_input_value.getText().toString());
             }
         }
